@@ -1,6 +1,7 @@
 🧠 Totem IA — Sprint 2
 Integração Sensores → SQL → Analytics → Machine Learning
 Flexmedia Challenge — FIAP
+__________________________________________________________________________
 📌 1. Introdução
 
 A Sprint 2 representa a primeira etapa prática da implementação do Totem IA, conectando coleta de dados simulados, armazenamento estruturado, tratamento, análise, visualização e aprendizado de máquina supervisionado.
