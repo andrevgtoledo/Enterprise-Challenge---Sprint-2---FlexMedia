@@ -312,6 +312,7 @@ y_pred = clf.predict(X_test)
 print(classification_report(y_test, y_pred))
 
 📊 8. Prints das Execuções (Simulados)
+
 Geração do CSV
 CSV gerado: data/sample_interactions.csv
 
