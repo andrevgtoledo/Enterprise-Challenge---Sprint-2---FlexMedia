@@ -1,1 +1,0 @@
-<ingest_to_sql.py content>
