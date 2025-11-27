@@ -41,6 +41,7 @@ Dashboard interativo (Streamlit)
         ↓
 Machine Learning supervisionado (RandomForest)
 
+
 📁 3. Estrutura Final do Repositório
 totem-ia-sprint2/
 │
@@ -61,6 +62,7 @@ totem-ia-sprint2/
 ├── ml_train.py
 └── README.md
 
+
 🧪 4. Códigos Completos
 📌 4.1. sensor_sim.py — Simulador de Sensores
 import csv, time, random, uuid
@@ -68,6 +70,46 @@ from datetime import datetime
 import os
 
 CSV_OUT = 'data/sample_interactions.csv'
+
+def random_interaction(session_id):
+    sensor = random.choice(['touch_1','touch_2','pres_1'])
+    event = random.choices(['touch','presence','qr'], weights=[0.7,0.25,0.05])[0]
+    duration = round(random.uniform(0.05,4.0) if event=='touch' else 0.0,3)
+    value = 1 if event in ('touch','presence') else 0
+    lang = random.choices(['pt-BR','en-US','es-ES'], weights=[0.7,0.2,0.1])[0]
+    content_id = str(uuid.uuid4()) if random.random() < 0.6 else None
+    pergunta = None
+    resposta = None
+    if event == 'touch' and random.random() < 0.4:
+        pergunta = random.choice(["Qual é esse animal?","Horário abre?","Onde fica o banheiro?"])
+        resposta = "Resposta simulada."
+    return {
+        'timestamp': datetime.utcnow().isoformat(),
+        'sensor_id': sensor,
+        'event_type': event,
+        'duration': duration,
+        'value': value,
+        'session_anon_id': session_id,
+        'language': lang,
+        'content_id': content_id,
+        'pergunta': pergunta,
+        'resposta': resposta
+    }
+
+if __name__ == '__main__':
+    os.makedirs('data', exist_ok=True)
+    with open(CSV_OUT, 'w', newline='', encoding='utf-8') as f:
+        writer = None
+        for s in range(50):
+            session_id = str(uuid.uuid4())
+            for i in range(random.randint(3,20)):
+                row = random_interaction(session_id)
+                if writer is None:
+                    writer = csv.DictWriter(f, fieldnames=list(row.keys()))
+                    writer.writeheader()
+                writer.writerow(row)
+                time.sleep(0.01)
+    print('CSV gerado:', CSV_OUT)
 
 def random_interaction(session_id):
     sensor = random.choice(['touch_1','touch_2','pres_1'])
