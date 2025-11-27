@@ -19,14 +19,13 @@ Aplicar Machine Learning supervisionado para classificar tipos de toques (curtos
 Garantir que os dados estejam limpos, padronizados e preparados para análise.
 
 2. Arquitetura Implementada
+   
 
 Fluxo desenvolvido na Sprint 2:
 
 Sensor Simulado (Python)
-
         ↓
 Arquivo CSV (sample_interactions.csv)
-
         ↓
 Ingestão para Banco SQL (SQLite)
         ↓
