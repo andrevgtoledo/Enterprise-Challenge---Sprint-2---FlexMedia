@@ -1,66 +1,60 @@
-README — Sprint 2
-Projeto Totem IA – Flexmedia Challenge
-Continuação da Arquitetura Desenvolvida na Sprint 1
+Totem IA — Sprint 2
+Projeto Flexmedia Challenge – FIAP
+Continuação da Arquitetura Definida na Sprint 1
 
-Este repositório contém a entrega completa da Sprint 2 do projeto Totem IA, implementando um pipeline funcional que integra sensores (simulados), armazenamento em banco SQL simples, análise de dados, visualização em dashboard e um exemplo de Machine Learning supervisionado.
+Este repositório contém a implementação prática da Sprint 2, demonstrando a integração entre sensores (simulados), banco de dados SQL, análise estatística e visualização simples em Python, além de um modelo supervisionado básico.
 
-O objetivo desta Sprint é demonstrar a ligação entre hardware (simulado), coleta de métricas e inteligência aplicada ao fluxo de uso do Totem Flexmedia.
+A Sprint 2 transforma a arquitetura definida anteriormente em execução real, formando um pipeline funcional fim a fim.
 
 1. Objetivos da Sprint 2
 
-Demonstrar a integração entre sensores simulados, banco SQL e análise de dados.
+Demonstrar a integração sensor → armazenamento SQL → análise → visualização.
 
-Registrar e estruturar dados de interação do totem, como ativações, duração de eventos e conteúdos acessados.
+Registrar e estruturar dados de interação do Totem IA.
 
-Criar visualizações simples utilizando Python (Streamlit).
+Criar visualizações iniciais utilizando Python (Streamlit).
 
-Aplicar Machine Learning supervisionado para classificar tipos de toques (curtos ou longos).
+Aplicar Machine Learning supervisionado para classificar tipos de interação.
 
-Garantir que os dados estejam limpos, padronizados e preparados para análise.
+Garantir dados limpos, padronizados e prontos para análise.
 
-2. Arquitetura Implementada
-   
-Fluxo desenvolvido na Sprint 2:
-
-Sensor Simulado (Python)
+2. Arquitetura Implementada (Sprint 2)
+Simulador de sensores (Python)
         ↓
 Arquivo CSV (sample_interactions.csv)
         ↓
-Ingestão para Banco SQL (SQLite)
+Ingestão e estruturação em SQL (SQLite)
         ↓
-Limpeza e Análise de Dados (Pandas)
+Limpeza, agregação e análises (Pandas)
         ↓
-Dashboard em Python (Streamlit)
+Dashboard simples em Python (Streamlit)
         ↓
-Modelo Supervisionado (RandomForest)
+Modelo supervisionado (RandomForest) – toque curto vs longo
 
 3. Estrutura do Repositório
-   
 totem-ia-sprint2/
 │
 ├── data/
 │   ├── sample_interactions.csv       (dados simulados)
-│   ├── flexmedia.sqlite              (banco SQL gerado)
-│   └── report_summary.json           (relatório de métricas)
+│   ├── flexmedia.sqlite              (banco SQL estruturado)
+│   └── report_summary.json           (sumário das análises)
 │
 ├── media/
 │   ├── interacoes_por_tipo.png       (gráfico gerado)
 │   ├── touch_dist.png                (gráfico gerado)
-│   └── video_demo_link.txt           (link do vídeo)
 │
-├── sensor_sim.py
-├── ingest_to_sql.py
-├── analysis.py
-├── dashboard_streamlit.py
-├── ml_train.py
+├── sensor_sim.py                     (simulador de sensores)
+├── ingest_to_sql.py                  (ingestão para SQL)
+├── analysis.py                       (análises e gráficos)
+├── dashboard_streamlit.py            (dashboard web)
+├── ml_train.py                       (modelo ML)
 └── README.md
 
+4. Scripts da Sprint 2
 
-5. Scripts da Sprint 2
+Abaixo está o código completo de cada módulo implementado nesta Sprint.
 
-A seguir estão todos os scripts utilizados no projeto, prontos para referenciamento no GitHub.
-
-4.1. Simulador de Sensores (sensor_sim.py)
+4.1. Simulador de Sensores — sensor_sim.py
 import csv, time, random, uuid
 from datetime import datetime
 import os
@@ -74,8 +68,7 @@ def random_interaction(session_id):
     value = 1 if event in ('touch','presence') else 0
     lang = random.choices(['pt-BR','en-US','es-ES'], weights=[0.7,0.2,0.1])[0]
     content_id = str(uuid.uuid4()) if random.random() < 0.6 else None
-    pergunta = None
-    resposta = None
+    pergunta, resposta = None, None
     if event == 'touch' and random.random() < 0.4:
         pergunta = random.choice(["Qual é esse animal?","Horário?","Onde fica o banheiro?"])
         resposta = "Resposta simulada."
@@ -107,7 +100,7 @@ if __name__ == '__main__':
                 time.sleep(0.01)
     print('CSV gerado:', CSV_OUT)
 
-4.2. Ingestão para SQL (ingest_to_sql.py)
+4.2. Ingestão para SQL — ingest_to_sql.py
 import sqlite3, csv
 
 DB = 'data/flexmedia.sqlite'
@@ -153,7 +146,8 @@ def ingest(csv_path, db_path):
                 cur.execute('INSERT INTO sessao (id, idioma, inicio) VALUES (?,?,?)',
                             (sess_id, row['language'], row['timestamp']))
 
-            cur.execute('''INSERT INTO interacao
+            cur.execute(
+            '''INSERT INTO interacao 
             (sessao_id, timestamp, sensor_id, tipo, pergunta, resposta, content_id, duration, value)
             VALUES (?,?,?,?,?,?,?,?,?)''',
             (sess_id, row['timestamp'], row['sensor_id'], row['event_type'], 
@@ -167,7 +161,7 @@ def ingest(csv_path, db_path):
 if __name__ == "__main__":
     ingest(CSV, DB)
 
-4.3. Análises e Geração de Gráficos (analysis.py)
+4.3. Análises e Gráficos — analysis.py
 import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -199,17 +193,17 @@ plt.tight_layout()
 plt.savefig('media/touch_dist.png')
 
 report = {
-    "total": len(df),
-    "por_tipo": df['tipo'].value_counts().to_dict(),
+    "total_interacoes": len(df),
+    "interacoes_por_tipo": df['tipo'].value_counts().to_dict(),
     "duracao_media": float(df['duration'].mean() or 0)
 }
 
 with open('data/report_summary.json','w',encoding='utf-8') as f:
-    json.dump(report,f,indent=2,ensure_ascii=False)
+    json.dump(report, f, indent=2, ensure_ascii=False)
 
 print("Análises concluídas.")
 
-4.4. Dashboard em Python (dashboard_streamlit.py)
+4.4. Dashboard em Streamlit — dashboard_streamlit.py
 import streamlit as st
 import sqlite3
 import pandas as pd
@@ -229,7 +223,7 @@ st.bar_chart(df['tipo'].value_counts())
 st.subheader("Últimas 20 Interações")
 st.dataframe(df.sort_values('timestamp', ascending=False).head(20))
 
-4.5. Machine Learning Supervisionado (ml_train.py)
+4.5. Machine Learning Supervisionado — ml_train.py
 import sqlite3
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -245,7 +239,7 @@ df['label'] = (df['duration'] > 0.5).astype(int)
 X = df[['duration']]
 y = df['label']
 
-X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 clf = RandomForestClassifier(n_estimators=50, random_state=42)
 clf.fit(X_train, y_train)
@@ -261,34 +255,28 @@ pip install pandas streamlit matplotlib scikit-learn
 Gerar dados simulados
 python sensor_sim.py
 
-Ingerir dados no banco SQL
+Ingerir no banco SQL
 python ingest_to_sql.py
 
-Rodar análise e gerar gráficos
+Executar análises e gerar gráficos
 python analysis.py
 
 Abrir dashboard
 streamlit run dashboard_streamlit.py
 
-Executar modelo de Machine Learning
+Executar Machine Learning supervisionado
 python ml_train.py
 
-6. Fluxo de Dados (entrada → processamento → saída)
+6. Fluxo Completo da Sprint 2
 Sensores simulados
-↓
-CSV de interações
-↓
-Banco SQL (SQLite)
-↓
-Limpeza e validação
-↓
-Análises e gráficos
-↓
-Dashboard
-↓
-Modelo supervisionado
+→ CSV gerado
+→ Banco SQL estruturado
+→ Limpeza e análise
+→ Geração de gráficos
+→ Dashboard
+→ Modelo supervisionado
 
-7. Conclusão
+Conclusão
 
-Esta Sprint entrega um pipeline funcional conectando sensores simulados, SQL, análise estatística, visualização e modelo simples de Machine Learning.
-Todo o pipeline atende aos requisitos exigidos pelo desafio Flexmedia e prepara terreno para as próximas Sprints.
+A Sprint 2 entrega um pipeline funcional que conecta sensores simulados, banco SQL, análises quantitativas, visualização e Machine Learning.
+Todos os requisitos técnicos e funcionais da Sprint foram atendidos com sucesso e contribuem diretamente para a evolução do Totem IA nas próximas etapas.
