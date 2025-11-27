@@ -1,32 +1,65 @@
 🧠 Totem IA — Sprint 2
-Relatório Técnico Completo com Diagramas e Código
+Integração Sensores → SQL → Analytics → Machine Learning
 Flexmedia Challenge — FIAP
-Resumo
+📌 1. Introdução
 
-Este documento apresenta a implementação completa da Sprint 2 do projeto Totem IA, desenvolvido no contexto do Enterprise Challenge da FIAP em parceria com a empresa Flexmedia.
-O objetivo principal desta sprint foi construir um pipeline funcional que conectasse sensores (simulados), armazenamento SQL, análises estatísticas, visualizações e um modelo inicial de Machine Learning supervisionado.
+A Sprint 2 representa a primeira etapa prática da implementação do Totem IA, conectando coleta de dados simulados, armazenamento estruturado, tratamento, análise, visualização e aprendizado de máquina supervisionado.
 
-Todo o fluxo de dados aqui construído é uma evolução prática da arquitetura apresentada na Sprint 1, demonstrando a viabilidade do sistema e preparando terreno para integrações avançadas nas próximas etapas.
+Tudo foi construído com base no planejamento arquitetural da Sprint 1, tornando esta entrega um protótipo funcional real, que demonstra:
 
-1. Arquitetura Implementada
+como o totem coleta informações do mundo físico,
 
-A arquitetura prática construída nesta sprint segue o fluxo:
+como essas informações são estruturadas e armazenadas,
+
+como são transformadas em métricas,
+
+como podem alimentar sistemas inteligentes.
+
+🎯 2. Objetivos da Sprint 2
+
+✔ Demonstrar integração entre sensores/simulações e banco SQL
+✔ Registrar dados brutos e eventos de interação
+✔ Criar dashboard com métricas iniciais
+✔ Realizar análises estatísticas descritivas
+✔ Treinar um modelo supervisionado simples (toque curto vs longo)
+✔ Garantir organização e limpeza dos dados
+✔ Representar claramente todo o fluxo do pipeline
+
+🧱 3. Arquitetura Implementada
+
+A arquitetura prática desenvolvida nesta sprint segue o fluxo:
 
 flowchart TD
-    A[Sensores Simulados<br>(sensor_sim.py)] --> B[CSV Gerado<br>sample_interactions.csv]
+    A[Sensores Simulados<br>sensor_sim.py] --> B[Arquivo CSV<br>sample_interactions.csv]
     B --> C[Ingestão SQL<br>ingest_to_sql.py]
     C --> D[Banco SQLite<br>flexmedia.sqlite]
     D --> E[Análise Estatística<br>analysis.py]
-    E --> F[Gráficos e Sumário<br>media/*  data/report_summary.json]
+    E --> F[Relatórios e Gráficos<br>media/ e data/report_summary.json]
     E --> G[Machine Learning<br>ml_train.py]
-    E --> H[Dashboard Interativo<br>Streamlit]
+    F --> H[Dashboard Front-end<br>Streamlit]
 
 
-O pipeline representa o ciclo completo:
+Esta arquitetura implementa todo o pipeline real de dados, cobrindo todos os requisitos técnicos da Sprint 2.
 
-Geração → Ingestão → Armazenamento → Análise → Visualização → Inteligência
+🧬 4. Fluxo de Dados Completo
+Fluxo Entrada → Processamento → Saída
+sequenceDiagram
+    participant S as Sensor Simulado
+    participant CSV as CSV
+    participant SQL as Banco SQLite
+    participant A as Script de Análise
+    participant D as Dashboard
+    participant ML as Modelo ML
 
-2. Modelo de Dados (DER)
+    S->>CSV: Registro de evento bruto
+    CSV->>SQL: Ingestão dos dados
+    SQL->>A: Carregamento dos dados
+    A->>A: Limpeza, deduplicação e validação
+    A->>D: Dados analisados e estruturados
+    A->>ML: Dataset tratado
+    ML->>ML: Treinamento e validação
+
+🗄️ 5. Modelo de Dados (DER)
 erDiagram
     SESSAO {
         string id PK
@@ -49,9 +82,9 @@ erDiagram
         int value
     }
 
-    SESSAO ||--|{ INTERACAO : "registra"
+    SESSAO ||--|{ INTERACAO : "possui"
 
-3. Estrutura do Repositório
+📁 6. Estrutura do Repositório
 Enterprise-Challenge---Sprint-2---FlexMedia/
 │
 ├── data/
@@ -70,12 +103,8 @@ Enterprise-Challenge---Sprint-2---FlexMedia/
 ├── ml_train.py
 └── README.md
 
-4. Implementação Completa dos Módulos
-
-A seguir está todo o código fonte completo, exatamente como deve aparecer no repositório.
-
-4.1. Simulação de Sensores
-Arquivo: sensor_sim.py
+🧩 7. Módulos Implementados (Códigos Completos)
+7.1. Simulador de Sensores — sensor_sim.py
 import csv, time, random, uuid
 from datetime import datetime
 import os
@@ -89,10 +118,12 @@ def random_interaction(session_id):
     value = 1 if event in ('touch','presence') else 0
     lang = random.choices(['pt-BR','en-US','es-ES'], weights=[0.7,0.2,0.1])[0]
     content_id = str(uuid.uuid4()) if random.random() < 0.6 else None
+
     pergunta, resposta = None, None
     if event == 'touch' and random.random() < 0.4:
         pergunta = random.choice(["Qual é esse animal?","Horário?","Onde fica o banheiro?"])
         resposta = "Resposta simulada."
+
     return {
         'timestamp': datetime.utcnow().isoformat(),
         'sensor_id': sensor,
@@ -121,8 +152,7 @@ if __name__ == '__main__':
                 time.sleep(0.01)
     print('CSV gerado:', CSV_OUT)
 
-4.2. Ingestão e Banco SQL
-Arquivo: ingest_to_sql.py
+7.2. Ingestão de Dados SQL — ingest_to_sql.py
 import sqlite3, csv
 
 DB = 'data/flexmedia.sqlite'
@@ -176,7 +206,7 @@ def ingest(csv_path, db_path):
                 VALUES (?,?,?,?,?,?,?,?,?)''',
                 (sess_id, row['timestamp'], row['sensor_id'], row['event_type'], 
                  row['pergunta'], row['resposta'], row['content_id'], 
-                 float(row['duration'] or 0), int(row['value'] or 0))
+                 float(row['duration']), int(row['value']))
             )
 
     conn.commit()
@@ -186,8 +216,7 @@ def ingest(csv_path, db_path):
 if __name__ == "__main__":
     ingest(CSV, DB)
 
-4.3. Análises Estatísticas
-Arquivo: analysis.py
+7.3. Análises Estatísticas — analysis.py
 import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -198,6 +227,7 @@ DB = 'data/flexmedia.sqlite'
 conn = sqlite3.connect(DB)
 
 df = pd.read_sql_query('SELECT * FROM interacao', conn, parse_dates=['timestamp'])
+
 df = df.drop_duplicates(subset=['timestamp','sensor_id','tipo'])
 
 df['touch_type'] = df['duration'].apply(
@@ -229,8 +259,7 @@ with open('data/report_summary.json','w',encoding='utf-8') as f:
 
 print("Análises concluídas.")
 
-4.4. Dashboard Interativo
-Arquivo: dashboard_streamlit.py
+7.4. Dashboard Interativo — dashboard_streamlit.py
 import streamlit as st
 import sqlite3
 import pandas as pd
@@ -250,8 +279,7 @@ st.bar_chart(df['tipo'].value_counts())
 st.subheader("Últimas 20 Interações")
 st.dataframe(df.sort_values('timestamp', ascending=False).head(20))
 
-4.5. Machine Learning Supervisionado
-Arquivo: ml_train.py
+7.5. Machine Learning Supervisionado — ml_train.py
 import sqlite3
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -282,57 +310,48 @@ y_pred = clf.predict(X_test)
 
 print(classification_report(y_test, y_pred))
 
-5. Resultados Obtidos
-✔ Pipeline funcional ponta a ponta
-✔ Banco SQL populado automaticamente
-✔ Métricas e análises geradas com sucesso
-✔ Dashboard operacional
-✔ Gráficos exportados em /media
-✔ Modelo supervisionado funcional
+📊 8. Prints das Execuções (Simulados)
+Geração do CSV
+CSV gerado: data/sample_interactions.csv
 
-O sistema demonstra de forma completa:
+Ingestão SQL
+Ingestão concluída.
 
-capacidade de simular uso real do totem,
+Análises
+Análises concluídas.
 
-armazenamento consistente dos dados,
+Modelo supervisionado
+              precision recall f1-score support
+...
 
-geração de insights analíticos,
+Dashboard
+http://localhost:8501
 
-e processamento supervisionado inicial.
-
-6. Como Executar o Projeto
-1. Instalar dependências
+🚀 9. Como Executar o Projeto
 pip install pandas streamlit matplotlib scikit-learn
 
-2. Gerar dados de sensores
+
+Gerar dados brutos:
+
 python sensor_sim.py
 
-3. Ingerir no banco SQL
+
+Ingerir no banco:
+
 python ingest_to_sql.py
 
-4. Executar análises
+
+Analisar:
+
 python analysis.py
 
-5. Abrir o dashboard
+
+Abrir dashboard:
+
 streamlit run dashboard_streamlit.py
 
-6. Rodar o modelo de Machine Learning
+
+Treinar modelo:
+
 python ml_train.py
 
-7. Conclusão
-
-A Sprint 2 consolida a fundação técnica do sistema Totem IA, validando as decisões arquiteturais tomadas anteriormente e preparando a solução para os próximos incrementos, que incluirão integração com APIs de IA, backend FastAPI e módulos reais de interação.
-
-O pipeline desenvolvido demonstra maturidade técnica, modularidade e aderência às boas práticas de Engenharia de Dados e Sistemas Inteligentes.
-
-8. Trabalhos Futuros
-
-Integração com sensores físicos e ESP32.
-
-Migração do SQL local para Cloud SQL.
-
-Expansão de features de IA (Gemini, Vision, Speech-to-Text).
-
-Dashboards avançados com métricas de clientes reais.
-
-Automação do pipeline e CI/CD.
