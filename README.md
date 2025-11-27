@@ -329,6 +329,7 @@ Dashboard
 http://localhost:8501
 
 🚀 9. Como Executar o Projeto
+
 pip install pandas streamlit matplotlib scikit-learn
 
 
