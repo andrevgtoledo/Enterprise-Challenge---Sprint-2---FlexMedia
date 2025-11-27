@@ -55,6 +55,7 @@ totem-ia-sprint2/
 Abaixo está o código completo de cada módulo implementado nesta Sprint.
 
 4.1. Simulador de Sensores — sensor_sim.py
+
 import csv, time, random, uuid
 from datetime import datetime
 import os
@@ -99,6 +100,7 @@ if __name__ == '__main__':
                 writer.writerow(row)
                 time.sleep(0.01)
     print('CSV gerado:', CSV_OUT)
+
 
 4.2. Ingestão para SQL — ingest_to_sql.py
 import sqlite3, csv
