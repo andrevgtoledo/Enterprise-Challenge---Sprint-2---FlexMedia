@@ -1,69 +1,66 @@
-Totem IA — Sprint 2
-Flexmedia Challenge – FIAP
+🧠 Totem IA — Sprint 2
+Flexmedia Challenge — FIAP
 Integração entre Sensores, Banco de Dados, Análise Estatística e Machine Learning
 
-Este repositório documenta a implementação prática da Sprint 2 do projeto Totem IA, dando continuidade à arquitetura conceitual definida na Sprint 1.
-Nesta etapa, o grupo desenvolveu um pipeline funcional que conecta simulação de sensores, estruturação dos dados em SQL, análises estatísticas, visualização com dashboard e um modelo simples de Machine Learning supervisionado.
+Este repositório apresenta a entrega completa da Sprint 2 do projeto Totem IA, dando continuidade ao planejamento técnico desenvolvido na Sprint 1.
+A etapa atual materializa a integração entre sensores (simulados), armazenamento SQL, tratamento de dados, visualização analítica e aprendizado supervisionado aplicado ao contexto do Totem Flexmedia.
 
-A Sprint 2 marca a transição da concepção para a execução técnica, validando a viabilidade do Totem IA como solução interativa inteligente para ambientes educacionais e culturais.
+🎯 1. Objetivos da Sprint 2
 
-1. Objetivos da Sprint 2
+Implementar um pipeline funcional dados → SQL → análise → visualização.
 
-Demonstrar a integração fim a fim entre hardware simulado e software.
+Registrar e estruturar informações simuladas de sensores associados ao Totem IA.
 
-Registrar e estruturar dados de uso do totem (interações, sessões, eventos).
+Criar métricas e gráficos iniciais para acompanhamento do uso.
 
-Construir análises exploratórias e métricas básicas a partir do banco SQL.
+Demonstrar um exemplo de Machine Learning supervisionado com dataset simples.
 
-Criar uma visualização inicial acessível via dashboard em Python.
+Garantir integridade, limpeza e padronização dos dados coletados.
 
-Implementar um pequeno modelo supervisionado capaz de classificar interações.
+Validar a arquitetura definida na Sprint 1 em um ambiente prático.
 
-Garantir data quality: limpeza, padronização, validação e ausência de duplicidades.
-
-2. Arquitetura Implementada
-
-O fluxo de dados construído na Sprint 2 segue a cadeia:
-
+🏛️ 2. Arquitetura Desenvolvida
 Simulador de sensores
         ↓
-Geração de CSV com eventos
+CSV de eventos do totem
         ↓
-Ingestão e modelagem em banco SQL (SQLite)
+Ingestão para banco SQL (SQLite)
         ↓
-Análises estatísticas (Pandas/Matplotlib)
+Tratamento e análise (Pandas)
+        ↓
+Geração de gráficos (Matplotlib)
         ↓
 Dashboard interativo (Streamlit)
         ↓
-Modelo ML supervisionado (Random Forest)
+Modelo supervisionado (RandomForest)
 
 
-Essa arquitetura é uma versão reduzida, funcional e fiel ao plano proposto no documento da Sprint 1.
+Esta arquitetura representa uma versão prática e reduzida do fluxo de dados real previsto para o Totem Flexmedia.
 
-3. Estrutura do Repositório
-totem-ia-sprint2/
+📁 3. Estrutura do Repositório
+Enterprise-Challenge---Sprint-2---FlexMedia/
 │
 ├── data/
-│   ├── sample_interactions.csv       Dados simulados
-│   ├── flexmedia.sqlite              Banco SQL estruturado
-│   └── report_summary.json           Relatório estatístico
+│   ├── sample_interactions.csv       → Dados simulados do totem
+│   ├── flexmedia.sqlite              → Banco SQL estruturado
+│   └── report_summary.json           → Métricas geradas na análise
 │
 ├── media/
-│   ├── interacoes_por_tipo.png       Gráfico analítico
-│   ├── touch_dist.png                Gráfico de duração
+│   ├── interacoes_por_tipo.png       → Gráfico de tipos de interação
+│   ├── touch_dist.png                → Gráfico de duração dos toques
 │
-├── sensor_sim.py                     Simulação de sensores
-├── ingest_to_sql.py                  Ingestão e modelagem SQL
-├── analysis.py                       Análises estatísticas
-├── dashboard_streamlit.py            Dashboard em Streamlit
-├── ml_train.py                       Modelo supervisionado
+├── sensor_sim.py                     → Simulador de sensores
+├── ingest_to_sql.py                  → Ingestão e modelagem em SQL
+├── analysis.py                       → Análises estatísticas
+├── dashboard_streamlit.py            → Dashboard analítico
+├── ml_train.py                       → Modelo ML supervisionado
 └── README.md
 
-4. Módulos e Scripts Desenvolvidos
+🧩 4. Módulos do Projeto
 
-A seguir estão todos os scripts implementados nesta Sprint, exatamente como constam no repositório.
+A seguir estão todos os scripts utilizados na Sprint 2.
 
-4.1. Simulação de Sensores
+📌 4.1. Simulação de Sensores
 
 Arquivo: sensor_sim.py
 
@@ -112,7 +109,7 @@ if __name__ == '__main__':
                 time.sleep(0.01)
     print('CSV gerado:', CSV_OUT)
 
-4.2. Ingestão e Modelagem SQL
+📌 4.2. Ingestão e Banco SQL
 
 Arquivo: ingest_to_sql.py
 
@@ -179,7 +176,7 @@ def ingest(csv_path, db_path):
 if __name__ == "__main__":
     ingest(CSV, DB)
 
-4.3. Análises Estatísticas
+📌 4.3. Análises Estatísticas
 
 Arquivo: analysis.py
 
@@ -224,7 +221,7 @@ with open('data/report_summary.json','w',encoding='utf-8') as f:
 
 print("Análises concluídas.")
 
-4.4. Dashboard Analítico
+📌 4.4. Dashboard
 
 Arquivo: dashboard_streamlit.py
 
@@ -247,7 +244,7 @@ st.bar_chart(df['tipo'].value_counts())
 st.subheader("Últimas 20 Interações")
 st.dataframe(df.sort_values('timestamp', ascending=False).head(20))
 
-4.5. Modelo Supervisionado
+📌 4.5. Machine Learning Supervisionado
 
 Arquivo: ml_train.py
 
@@ -281,26 +278,26 @@ y_pred = clf.predict(X_test)
 
 print(classification_report(y_test, y_pred))
 
-5. Como Executar o Projeto
+▶️ 5. Como Executar
 1. Instalar dependências
 pip install pandas streamlit matplotlib scikit-learn
 
-2. Gerar dados simulados
+2. Gerar os dados simulados
 python sensor_sim.py
 
-3. Ingerir no banco SQL
+3. Carregar os dados no banco SQL
 python ingest_to_sql.py
 
-4. Executar análises e gerar gráficos
+4. Executar a análise exploratória
 python analysis.py
 
-5. Abrir dashboard
+5. Abrir o dashboard
 streamlit run dashboard_streamlit.py
 
-6. Rodar modelo supervisionado
+6. Treinar o modelo de Machine Learning
 python ml_train.py
 
-6. Conclusão
+🏁 6. Conclusão
 
-A Sprint 2 valida a integração entre hardware simulado e software, confirmando que o Totem IA possui uma base estruturada para suportar coleta, armazenamento e análise de dados em cenários reais.
-O pipeline criado cumpre os requisitos técnicos, estatísticos e funcionais definidos para esta etapa, preparando o projeto para as evoluções da Sprint 3.
+A Sprint 2 comprova a viabilidade da integração entre sensores físicos (simulados), banco de dados SQL, análises estatísticas e modelos de Machine Learning aplicados ao Totem IA.
+Os resultados obtidos consolidam a fundação técnica necessária para as próximas fases do projeto e validam a arquitetura proposta na Sprint 1.
