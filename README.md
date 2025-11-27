@@ -20,7 +20,6 @@ Garantir que os dados estejam limpos, padronizados e preparados para análise.
 
 2. Arquitetura Implementada
    
-
 Fluxo desenvolvido na Sprint 2:
 
 Sensor Simulado (Python)
@@ -36,6 +35,7 @@ Dashboard em Python (Streamlit)
 Modelo Supervisionado (RandomForest)
 
 3. Estrutura do Repositório
+   
 totem-ia-sprint2/
 │
 ├── data/
@@ -55,7 +55,8 @@ totem-ia-sprint2/
 ├── ml_train.py
 └── README.md
 
-4. Scripts da Sprint 2
+
+5. Scripts da Sprint 2
 
 A seguir estão todos os scripts utilizados no projeto, prontos para referenciamento no GitHub.
 
