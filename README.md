@@ -23,8 +23,10 @@ Garantir que os dados estejam limpos, padronizados e preparados para análise.
 Fluxo desenvolvido na Sprint 2:
 
 Sensor Simulado (Python)
+
         ↓
 Arquivo CSV (sample_interactions.csv)
+
         ↓
 Ingestão para Banco SQL (SQLite)
         ↓
